@@ -3,27 +3,26 @@ document.addEventListener('DOMContentLoaded', function() {
   var guessCount = 4;
   var password = '';
 
-  var start = document.getElementById('start');
-  start.addEventListener('click', function() {
-    toggleClasses(document.getElementById('start-screen'), 'hide', 'show');
-    toggleClasses(document.getElementById('game-screen'), 'hide', 'show');
+  let start = d3.select("#start").on("click", function(){
+    toggleClasses(d3.select('#start-screen'), 'hide', 'show');
+    toggleClasses(d3.select('#game-screen'), 'hide', 'show');
     startGame();
   });
 
-  function toggleClasses(element) {
+  function toggleClasses(selection) {
     for (var i = 1; i < arguments.length; i++) {
-      element.classList.toggle(arguments[i]);
+      var classIsSet = selection.classed(arguments[i]);
+      selection.classed(arguments[i], !classIsSet);
     }
   }
 
   function startGame() {
     // get random words and append them to the DOM
-    var wordList = document.getElementById("word-list");
+    //var wordList = document.getElementById("word-list");
+    var wordList = d3.select("#word-list"); 
     var randomWords = getRandomValues(words, wordCount);
     randomWords.forEach(function(word) {
-      var li = document.createElement("li");
-      li.innerText = word;
-      wordList.appendChild(li);
+      wordList.append("li").text(word);
     });
 
     // set a secret password and the guess count display
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setGuessCount(guessCount);
 
     // add update listener for clicking on a word
-    wordList.addEventListener('click', updateGame);
+    wordList.on('click', updateGame);
   }
 
   function getRandomValues(array, numberOfVals) {
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function setGuessCount(newCount) {
     guessCount = newCount;
-    document.getElementById("guesses-remaining").innerText = "Guesses remaining: " + guessCount + ".";
+    d3.select("#guesses-remaining").text() = "Guesses remaining: " + guessCount + ".";
   }
 
   function updateGame(e) {
@@ -68,11 +67,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // check whether the game is over
       if (similarityScore === password.length) {
-        toggleClasses(document.getElementById("winner"), 'hide', 'show');
-        this.removeEventListener('click', updateGame);
+        toggleClasses(d3.select("#winner"), 'hide', 'show');
+        this.on('click', null);
       } else if (guessCount === 0) {
-        toggleClasses(document.getElementById("loser"), 'hide', 'show');
-        this.removeEventListener('click', updateGame);
+        toggleClasses(d3.select("#loser"), 'hide', 'show');
+        this.on('click', null);
       }
     }
   }
