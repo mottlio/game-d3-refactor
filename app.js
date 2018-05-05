@@ -53,16 +53,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function setGuessCount(newCount) {
     guessCount = newCount;
-    d3.select("#guesses-remaining").text() = "Guesses remaining: " + guessCount + ".";
+    d3.select("#guesses-remaining").text("Guesses remaining: " + guessCount + ".");
   }
 
-  function updateGame(e) {
-    if (e.target.tagName === "LI" && !e.target.classList.contains("disabled")) {
+  function updateGame() {
+    var tgt = d3.select(d3.event.target);
+    if (tgt.node().tagName === "LI" && !tgt.classed("disabled")) {
       // grab guessed word, check it against password, update view
-      var guess = e.target.innerText;
+      var guess = tgt.text();
       var similarityScore = compareWords(guess, password);
       e.target.classList.add("disabled");
-      e.target.innerText = e.target.innerText + " --> Matching Letters: " + similarityScore;
+      tgt.classed("disabled", true)
+        .text(guess + " --> Matching Letters: " + similarityScore);
       setGuessCount(guessCount - 1);
 
       // check whether the game is over
